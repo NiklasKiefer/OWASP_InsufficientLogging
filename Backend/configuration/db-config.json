@@ -1,0 +1,8 @@
+{
+    "databaseName": "accountdata",
+    "databaseServer": "localhost",
+    "databasePort": 28015,
+    "databaseTables": [
+        "accounts"
+    ]
+}
