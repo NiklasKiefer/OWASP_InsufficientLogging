@@ -1,0 +1,24 @@
+<p class="mat-headline">Register</p>
+<div id="userData">
+    <form class="form">
+        <p>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Username</mat-label>
+                <input matInput [formControl]="controlUsername" #username required>
+                <mat-error *ngIf="controlUsername.invalid">{{getErrorMessage(controlUsername)}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Password</mat-label>
+                <input matInput [formControl]="controlPassword" [type]="hide ? 'password' : 'text'" #password required>
+                <mat-error *ngIf="controlPassword.invalid">{{getErrorMessage(controlPassword)}}</mat-error>
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+        </p>
+    </form>
+</div>
+<div id="button"><button mat-raised-button color="primary"
+        (click)="registerUser(username.value, password.value)">Register</button>
+</div>

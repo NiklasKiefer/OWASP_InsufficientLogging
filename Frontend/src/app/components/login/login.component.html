@@ -1,0 +1,27 @@
+<p class="mat-headline">Login</p>
+<div id="userData">
+    <form class="form">
+        <p>
+            <mat-form-field class="full-width" appearance="fill" id="username">
+                <mat-label>Username</mat-label>
+                <input matInput [formControl]="controlUsername" #username required>
+                <mat-error *ngIf="controlUsername.invalid">{{getErrorMessage(controlUsername)}}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width" appearance="fill" id="password">
+                <mat-label>Password</mat-label>
+                <input matInput [formControl]="controlPassword" #password [type]="hide ? 'password' : 'text'" required>
+                <mat-error *ngIf="controlPassword.invalid">{{getErrorMessage(controlPassword)}}</mat-error>
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+        </p>
+    </form>
+</div>
+<div id="button"><button mat-raised-button color="primary"
+        (click)="loginUser(username.value, password.value)">Login</button></div>
+<div id="register">
+    <p>Not registered yet? Create an account here.</p>
+    <button mat-raised-button color="primary" (click)="register()">Register</button>
+</div>
