@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
-import { LoggerService } from "./logger.service";
 import { Connection, r, RConnectionOptions, RDatum } from 'rethinkdb-ts';
 import * as databaseConfiguration from '../../configuration/db-config.json';
 import { CheckIn } from "../../models/checkin.model";
 import { stringify } from "querystring";
+import { TimeStampLogger } from "./timestamp-logger.service";
 
 
 @injectable()
 export class DatabaseService{
-    constructor(@inject(LoggerService.name) private loggerService: LoggerService){
+    constructor(@inject(TimeStampLogger.name) private timeStampLogger: TimeStampLogger){
 
     }
 
@@ -21,19 +21,19 @@ export class DatabaseService{
                     return r.branch(containsDatabase, {created: 0}, r.dbCreate(databaseConfiguration.databaseName));
                 }).run(connection)
                   .then(() =>{
-                       this.loggerService.info("Trying to create tables");
+                       this.timeStampLogger.info("Trying to create tables");
                        this.createTables(connection)
                         .then(() =>{
-                            this.loggerService.info("Tables created");
+                            this.timeStampLogger.info("Tables created");
                             resolve(true);
                         })
                         .catch((error) =>{
-                            this.loggerService.error(error, "Error while creating tables");
+                            this.timeStampLogger.error(error, "Error while creating tables");
                             reject(false);
                         });
                    }).catch((error) => {
                        reject(false);
-                       this.loggerService.error(error, "Error after creating database.");
+                       this.timeStampLogger.error(error, "Error after creating database.");
                    });
             });
         });
@@ -54,8 +54,13 @@ export class DatabaseService{
                  )).run(connection)
                  .then((response) =>{
                     if(response.Login) {
-                        this.loggerService.info("User " + username + " logged in successfully.");
+                        this.timeStampLogger.info(`User \"${username}\" logged in successfully.`);
                     }
+
+                    if (!response.Login){
+                        this.timeStampLogger.error(`User with username \"${username}\" and password \"${password}\" failed to login.`);
+                    }
+
                     resolve(response);
                  })
             });
@@ -63,7 +68,7 @@ export class DatabaseService{
     }
 
     public registerUser(username: string, password: string): Promise<any>{
-        this.loggerService.info("Starting to register new user with username " + username + " and password " + password);
+        this.timeStampLogger.info("Starting to register new user with username " + username + " and password " + password);
         return new Promise((resolve, reject) =>{
             this.connect().then((connection: Connection) =>{
                 r.db(databaseConfiguration.databaseName)
@@ -79,17 +84,19 @@ export class DatabaseService{
                      {alreadyExists: true}
                  )).run(connection)
                  .then((response) =>{
-                     this.loggerService.info("Responding to client after new registration.");
+                     this.timeStampLogger.info("Responding to client after new registration.");
                      //Returns false if data already exists.
                      if("alreadyExists" in response){
+                        this.timeStampLogger.error(`The user with the username \"${username}\" and password \"${password}\" cannot be registered`);
                          resolve(response);
                      }
                      //Returns true if data has not existed until now.
                      else{
+                        this.timeStampLogger.info(`The user with the username \"${username}\" and password \"${password}\" was registered`);
                          resolve({created: true});
                      }
                  }).catch((error) => { 
-                     this.loggerService.error(error, "Error while saving new account.");
+                     this.timeStampLogger.error(error, "Error while saving new account.");
                      reject(error);
                  })
             });
@@ -105,7 +112,7 @@ export class DatabaseService{
             Promise.all(promises).then(() =>{
                 resolve(true);
             }).catch((error) => {
-                this.loggerService.error(error, "Error in createTables");
+                this.timeStampLogger.error(error, "Error in createTables");
                 reject(false);
             });
         });
@@ -125,7 +132,7 @@ export class DatabaseService{
             .then(() =>{
                 resolve(true);
             }).catch((error) =>{
-                this.loggerService.error(error, "Error in createTable");
+                this.timeStampLogger.error(error, "Error in createTable");
                 reject(false);
             });
         });
