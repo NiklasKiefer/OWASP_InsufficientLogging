@@ -21,8 +21,8 @@ export class LoginController implements interfaces.Controller{
 
     @httpPost('/userlogout/:username&:password')
     public logout(request: Request, response: Response): void{
-        this.timeStampLogger.info(`User \"${request.params.username}\" with password  \"${request.params.password}\" tries to log out`);
+        this.timeStampLogger.info(`User \"${request.params.username}\" with password  \"${request.params.password}\" tries to log out.`);
         response.status(200).json("Log out completed");
-        this.timeStampLogger.info(`User \"${request.params.username}\" with password  \"${request.params.password}\" was logged out`);
+        this.timeStampLogger.info(`User \"${request.params.username}\" with password  \"${request.params.password}\" was logged out.`);
     }
 }

@@ -14,7 +14,7 @@ export class RegisterController implements interfaces.Controller{
 
     @httpPost('/user/:username&:password')
     public register(request: Request, response: Response): void{
-        this.timeStampLogger.info(`User \"${request.params.username}\" tries to register`);
+        this.timeStampLogger.info(`User \"${request.params.username}\" tries to register.`);
         this.databaseService.registerUser(request.params.username, request.params.password).then((result) =>{
             response.status(200).json(result);
         })

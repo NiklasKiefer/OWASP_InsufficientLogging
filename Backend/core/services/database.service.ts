@@ -21,14 +21,14 @@ export class DatabaseService{
                     return r.branch(containsDatabase, {created: 0}, r.dbCreate(databaseConfiguration.databaseName));
                 }).run(connection)
                   .then(() =>{
-                       this.timeStampLogger.info("Trying to create tables");
+                       this.timeStampLogger.info("Trying to create tables.");
                        this.createTables(connection)
                         .then(() =>{
-                            this.timeStampLogger.info("Tables created");
+                            this.timeStampLogger.info("Tables created.");
                             resolve(true);
                         })
                         .catch((error) =>{
-                            this.timeStampLogger.error(error, "Error while creating tables");
+                            this.timeStampLogger.error(error, "Error while creating tables.");
                             reject(false);
                         });
                    }).catch((error) => {
@@ -68,7 +68,7 @@ export class DatabaseService{
     }
 
     public registerUser(username: string, password: string): Promise<any>{
-        this.timeStampLogger.info("Starting to register new user with username " + username + " and password " + password);
+        this.timeStampLogger.info(`Starting to register new user with username \"${username}\" and password \"${password}\".`);
         return new Promise((resolve, reject) =>{
             this.connect().then((connection: Connection) =>{
                 r.db(databaseConfiguration.databaseName)
@@ -87,12 +87,12 @@ export class DatabaseService{
                      this.timeStampLogger.info("Responding to client after new registration.");
                      //Returns false if data already exists.
                      if("alreadyExists" in response){
-                        this.timeStampLogger.error(`The user with the username \"${username}\" and password \"${password}\" cannot be registered`);
+                        this.timeStampLogger.error(`The user with the username \"${username}\" and password \"${password}\" cannot be registered.`);
                          resolve(response);
                      }
                      //Returns true if data has not existed until now.
                      else{
-                        this.timeStampLogger.info(`The user with the username \"${username}\" and password \"${password}\" was registered`);
+                        this.timeStampLogger.info(`The user with the username \"${username}\" and password \"${password}\" was registered.`);
                          resolve({created: true});
                      }
                  }).catch((error) => { 
@@ -112,7 +112,7 @@ export class DatabaseService{
             Promise.all(promises).then(() =>{
                 resolve(true);
             }).catch((error) => {
-                this.timeStampLogger.error(error, "Error in createTables");
+                this.timeStampLogger.error(error, "Error in createTables.");
                 reject(false);
             });
         });
@@ -132,7 +132,7 @@ export class DatabaseService{
             .then(() =>{
                 resolve(true);
             }).catch((error) =>{
-                this.timeStampLogger.error(error, "Error in createTable");
+                this.timeStampLogger.error(error, "Error in createTable.");
                 reject(false);
             });
         });
