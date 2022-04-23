@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 import { interfaces, TYPE } from 'inversify-express-utils';
-import { LoggerService } from '../services/logger.service';
 import { DatabaseService } from '../services/database.service';
 import { LoginController } from '../../api/events/login.controller';
 import { RegisterController } from '../../api/events/register.controller';
+import { TimeStampLogger } from '../services/timestamp-logger.service';
 
 export class IoContainer {
   private container = new Container();
@@ -31,8 +31,8 @@ export class IoContainer {
 
   private initServices(): void {
     this.container
-      .bind<LoggerService>(LoggerService.name)
-      .to(LoggerService)
+      .bind<TimeStampLogger>(TimeStampLogger.name)
+      .to(TimeStampLogger)
       .inSingletonScope();
       this.container
       .bind<DatabaseService>(DatabaseService.name)
