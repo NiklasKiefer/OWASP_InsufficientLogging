@@ -22,6 +22,6 @@ export class LoggerService implements ILogger {
     }
 
     private getTimeStamp(): string{
-        return new Date().toLocaleDateString();
+        return new Date().toLocaleString();
     }
 }

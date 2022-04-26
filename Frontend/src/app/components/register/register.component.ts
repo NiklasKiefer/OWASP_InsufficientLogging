@@ -17,42 +17,46 @@ export class RegisterComponent implements OnInit {
   constructor(private loggerService: LoggerService, private httpClient: HttpClient, private router: Router, private snackBar: MatSnackBar) { }
   public hide = true;
 
+  private getClassAndMethodStack(methodname: string){
+    return "[RegisterComponent]" + "[" + methodname + "]";
+  }
+
   ngOnInit(): void {
   }
 
   public registerUser(username: string, password: string): void {
 
     if (username == '' || password == '') {
-      this.snackBar.openFromComponent(SnackbarComponent, { 
-        data: {msg: 'Please fill the fields with a * out.'}, 
-        duration: 4000, 
+      this.snackBar.openFromComponent(SnackbarComponent, {
+        data: {msg: 'Please fill the fields with a * out.'},
+        duration: 4000,
         horizontalPosition: 'center',
-        verticalPosition: 'top' 
+        verticalPosition: 'top'
       });
     }
 
     let url = apiConfiguration.register + username + '&' + password;
-    
+
     this.httpClient
     .post<any>(url, {})
     .subscribe({
       next: response => {
         if (response.created) {
-          this.loggerService.info('User registered.');
+          this.loggerService.info(this.getClassAndMethodStack("registerUser"),'User registered.');
           this.router.navigateByUrl('home', { state: {username: username, password: password} });
         }
         else {
-          this.snackBar.openFromComponent(SnackbarComponent, { 
-            data: {msg: 'Username already taken.'}, 
-            duration: 4000, 
+          this.snackBar.openFromComponent(SnackbarComponent, {
+            data: {msg: 'Username already taken.'},
+            duration: 4000,
             horizontalPosition: 'center',
-            verticalPosition: 'top' 
+            verticalPosition: 'top'
           });
 
-          this.loggerService.info('Username already taken.');
+          this.loggerService.info(this.getClassAndMethodStack("registerUser"),'Username already taken.');
         }
     },
-    complete: () => this.loggerService.info('Registering complete.'),
+    complete: () => this.loggerService.info(this.getClassAndMethodStack("registerUser"),'Registering complete.'),
     });
   }
 
