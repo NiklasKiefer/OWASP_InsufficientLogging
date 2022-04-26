@@ -1,6 +1,6 @@
 {
     "databaseName": "accountdata",
-    "databaseServer": "localhost",
+    "databaseServer": "webDevDb.int",
     "databasePort": 28015,
     "databaseTables": [
         "accounts"

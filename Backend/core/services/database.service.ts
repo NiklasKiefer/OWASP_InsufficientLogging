@@ -1,15 +1,11 @@
 import { inject, injectable } from "inversify";
 import { LoggerService } from "./logger.service";
 import { Connection, r, RConnectionOptions, RDatum } from 'rethinkdb-ts';
-import * as databaseConfiguration from '../../configuration/db-config.json';
-import { CheckIn } from "../../models/checkin.model";
-import { stringify } from "querystring";
-
+import * as databaseConfiguration from '../../configuration/db-config.json'
 
 @injectable()
 export class DatabaseService{
     constructor(@inject(LoggerService.name) private loggerService: LoggerService){
-
     }
 
     public initialize(): Promise<boolean>{
@@ -55,6 +51,9 @@ export class DatabaseService{
                  .then((response) =>{
                     if(response.Login) {
                         this.loggerService.info("User " + username + " logged in successfully.");
+                    }
+                    else {
+                        this.loggerService.info("User " + username + " failed to log in.");
                     }
                     resolve(response);
                  })

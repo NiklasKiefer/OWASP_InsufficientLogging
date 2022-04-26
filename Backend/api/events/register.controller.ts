@@ -17,6 +17,10 @@ export class RegisterController implements interfaces.Controller{
         this.loggerService.info("User " + request.params.username + " tries to register");
         this.databaseService.registerUser(request.params.username, request.params.password).then((result) =>{
             response.status(200).json(result);
-        })
+            this.loggerService.info("User " + request.params.username + " registered successfully.");
+        }).catch((error) =>{
+            response.status(500).json(error);
+            this.loggerService.error(error, "Error while registering user " + request.params.username);
+        });
     }
 }
