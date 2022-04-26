@@ -12,6 +12,10 @@ export class DatabaseService{
 
     }
 
+    private getClassAndMethodStack(methodname: string){
+        return "[DatabaseService]" + "[" + methodname + "]";
+    }
+
     public initialize(): Promise<boolean>{
         return new Promise((resolve, reject) => {
             this.connect().then((connection: Connection) =>{
@@ -21,19 +25,19 @@ export class DatabaseService{
                     return r.branch(containsDatabase, {created: 0}, r.dbCreate(databaseConfiguration.databaseName));
                 }).run(connection)
                   .then(() =>{
-                       this.loggerService.info("Trying to create tables");
+                       this.loggerService.info(this.getClassAndMethodStack("initialize"),"Trying to create the Tables");
                        this.createTables(connection)
                         .then(() =>{
-                            this.loggerService.info("Tables created");
+                            this.loggerService.info(this.getClassAndMethodStack("initialize"),"Tables are created");
                             resolve(true);
                         })
                         .catch((error) =>{
-                            this.loggerService.error(error, "Error while creating tables");
+                            this.loggerService.error(this.getClassAndMethodStack("initialize"), "Error while creating Tables:" + error);
                             reject(false);
                         });
                    }).catch((error) => {
                        reject(false);
-                       this.loggerService.error(error, "Error after creating database.");
+                       this.loggerService.error(this.getClassAndMethodStack("initialize"), "Error after creating database:" + error);
                    });
             });
         });
@@ -54,7 +58,7 @@ export class DatabaseService{
                  )).run(connection)
                  .then((response) =>{
                     if(response.Login) {
-                        this.loggerService.info("User " + username + " logged in successfully.");
+                        this.loggerService.info(this.getClassAndMethodStack("loginUser"),"User " + username + " logged in successfully.");
                     }
                     resolve(response);
                  })
@@ -63,7 +67,7 @@ export class DatabaseService{
     }
 
     public registerUser(username: string, password: string): Promise<any>{
-        this.loggerService.info("Starting to register new user with username " + username + " and password " + password);
+        this.loggerService.info(this.getClassAndMethodStack("registerUser"),"Starting to register new user with username " + username + " and password " + password);
         return new Promise((resolve, reject) =>{
             this.connect().then((connection: Connection) =>{
                 r.db(databaseConfiguration.databaseName)
@@ -79,7 +83,7 @@ export class DatabaseService{
                      {alreadyExists: true}
                  )).run(connection)
                  .then((response) =>{
-                     this.loggerService.info("Responding to client after new registration.");
+                     this.loggerService.info(this.getClassAndMethodStack("registerUser"),"Responding to client after new registration.");
                      //Returns false if data already exists.
                      if("alreadyExists" in response){
                          resolve(response);
@@ -89,7 +93,7 @@ export class DatabaseService{
                          resolve({created: true});
                      }
                  }).catch((error) => { 
-                     this.loggerService.error(error, "Error while saving new account.");
+                     this.loggerService.error(this.getClassAndMethodStack("registerUser"), "Error while saving new account:" + error);
                      reject(error);
                  })
             });
@@ -105,7 +109,7 @@ export class DatabaseService{
             Promise.all(promises).then(() =>{
                 resolve(true);
             }).catch((error) => {
-                this.loggerService.error(error, "Error in createTables");
+                this.loggerService.error(this.getClassAndMethodStack("createTables"), "Error in while trying to create Tables:" + error);
                 reject(false);
             });
         });
@@ -125,7 +129,7 @@ export class DatabaseService{
             .then(() =>{
                 resolve(true);
             }).catch((error) =>{
-                this.loggerService.error(error, "Error in createTable");
+                this.loggerService.error(this.getClassAndMethodStack("createTable"), "Error while trying to create Table:" + tableName + ":" + error);
                 reject(false);
             });
         });

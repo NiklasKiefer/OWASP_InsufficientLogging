@@ -12,9 +12,13 @@ export class RegisterController implements interfaces.Controller{
 
     }
 
+    private getClassAndMethodStack(methodname: string){
+        return "[RegisterController]" + "[" + methodname + "]";
+    }
+    
     @httpPost('/user/:username&:password')
     public register(request: Request, response: Response): void{
-        this.loggerService.info("User " + request.params.username + " tries to register");
+        this.loggerService.info(this.getClassAndMethodStack("register"),"User " + request.params.username + " tries to register");
         this.databaseService.registerUser(request.params.username, request.params.password).then((result) =>{
             response.status(200).json(result);
         })
