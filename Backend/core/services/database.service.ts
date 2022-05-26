@@ -56,6 +56,9 @@ export class DatabaseService{
                     if(response.Login) {
                         this.loggerService.info("User " + username + " logged in successfully.");
                     }
+                    else {
+                        this.loggerService.info("Login-attempt with username " + username + " unsuccessful.");
+                    }
                     resolve(response);
                  })
             });
